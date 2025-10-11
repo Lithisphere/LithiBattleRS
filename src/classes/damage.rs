@@ -33,6 +33,6 @@ pub enum DamageResult {
 
 pub trait Damageable {
     fn process_damage(&mut self, damage: &Damage) -> DamageResult;
-    fn get_hp(&mut self) -> i32;
+    fn get_hp(&self) -> i32;
     fn set_hp(&mut self, amount: i32);
 }

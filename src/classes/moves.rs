@@ -10,4 +10,6 @@ pub trait Move {
         user: Rc<RefCell<dyn Attacker>>,
         target: &mut dyn Damageable,
     ) -> DamageResult;
+
+    fn get_name(&mut self) -> &str;
 }
