@@ -2,15 +2,16 @@ use std::{cell::RefCell, rc::Rc};
 
 use pancurses::{
     endwin, has_colors, init_pair, initscr, noecho, start_color, ColorPair, Input, Window,
-    COLOR_BLACK, COLOR_RED,
+    COLOR_BLACK, COLOR_RED, COLOR_WHITE,
 };
 
-struct UIScreen {
+struct UIScreen<'a> {
+    title: &'a str,
     window: Rc<RefCell<Window>>,
     border_color_pair: Option<ColorPair>,
 }
 
-impl UIScreen {
+impl<'a> UIScreen<'a> {
     fn get_border_color_pair(&self) -> Option<ColorPair> {
         self.border_color_pair
     }
@@ -19,7 +20,12 @@ impl UIScreen {
         return self.window.clone();
     }
 
-    fn draw_border(&mut self, title: &str) {
+    fn draw(&self) {
+        let title = &self.title;
+        self.draw_border(title);
+    }
+
+    fn draw_border(&self, title: &str) {
         match self.border_color_pair {
             Some(ColorPair(a)) => {
                 self.window.borrow_mut().attron(ColorPair(a));
@@ -40,11 +46,11 @@ impl UIScreen {
     }
 }
 
-struct UIInputScreen {
-    screen: UIScreen,
+struct UIInputScreen<'a> {
+    screen: UIScreen<'a>,
 }
 
-impl UIInputScreen {
+impl<'a> UIInputScreen<'a> {
     fn new(win: &Window) -> Self {
         let input_win = win
             .subwin(3, win.get_max_x(), win.get_max_y() - 3, 0)
@@ -53,6 +59,7 @@ impl UIInputScreen {
         input_win.refresh();
         Self {
             screen: UIScreen {
+                title: "Input",
                 window: Rc::new(RefCell::new(input_win)),
                 border_color_pair: None,
             },
@@ -102,14 +109,14 @@ impl UIInputScreen {
         // }
     }
 }
-pub struct GameWindow {
+pub struct GameWindow<'a> {
     screen: Window,
     max_x: i32,
     max_y: i32,
-    player_1_screen: UIScreen,
-    player_2_screen: UIScreen,
-    text_screen: UIScreen,
-    input_screen: UIInputScreen,
+    player_1_screen: UIScreen<'a>,
+    player_2_screen: UIScreen<'a>,
+    text_screen: UIScreen<'a>,
+    input_screen: UIInputScreen<'a>,
     input_buffer: String,
 }
 
@@ -118,12 +125,13 @@ pub enum InputResult {
     NoneResult,
 }
 
-impl GameWindow {
+impl<'a> GameWindow<'a> {
     pub fn new() -> Self {
         let tmp_win = initscr();
         noecho();
         if has_colors() {
             start_color();
+            init_pair(1, COLOR_WHITE, COLOR_BLACK);
             init_pair(2, COLOR_RED, COLOR_BLACK); // red text on black background
         }
         let (max_y, max_x) = tmp_win.get_max_yx();
@@ -142,14 +150,17 @@ impl GameWindow {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         let player_1_screen = UIScreen {
+            title: "Player 1",
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         let player_2_screen = UIScreen {
+            title: "Player 2",
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         let text_screen = UIScreen {
+            title: "Log",
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
@@ -189,18 +200,26 @@ impl GameWindow {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         self.player_1_screen = UIScreen {
+            title: "Player 1",
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         self.player_2_screen = UIScreen {
+            title: "Player 2",
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         self.text_screen = UIScreen {
+            title: "Log",
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
         self.input_screen = UIInputScreen::new(&tmp_win);
+
+        self.player_1_screen.draw();
+        self.player_2_screen.draw();
+        self.text_screen.draw();
+        self.input_screen.draw(Some(&self.input_buffer));
     }
 
     pub fn getch(&mut self) -> InputResult {
@@ -224,7 +243,7 @@ impl GameWindow {
     }
 }
 
-impl Drop for GameWindow {
+impl Drop for GameWindow<'_> {
     fn drop(&mut self) {
         endwin();
     }

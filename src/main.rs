@@ -21,8 +21,8 @@ fn main() {
     let players: Vec<Rc<RefCell<dyn Attacker>>> = vec![baud, duab];
 
     let mut win = GameWindow::new();
-    win.draw();
     loop {
+        win.draw();
         match win.getch() {
             InputResult::StringResult(s) => {}
             InputResult::NoneResult => {}
