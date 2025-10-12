@@ -5,13 +5,13 @@ use pancurses::{
     COLOR_BLACK, COLOR_RED, COLOR_WHITE,
 };
 
-struct UIScreen<'a> {
-    title: &'a str,
+struct UIScreen {
+    title: String,
     window: Rc<RefCell<Window>>,
     border_color_pair: Option<ColorPair>,
 }
 
-impl<'a> UIScreen<'a> {
+impl<'a> UIScreen {
     fn get_border_color_pair(&self) -> Option<ColorPair> {
         self.border_color_pair
     }
@@ -46,11 +46,11 @@ impl<'a> UIScreen<'a> {
     }
 }
 
-struct UIInputScreen<'a> {
-    screen: UIScreen<'a>,
+struct UIInputScreen {
+    screen: UIScreen,
 }
 
-impl<'a> UIInputScreen<'a> {
+impl UIInputScreen {
     fn new(win: &Window) -> Self {
         let input_win = win
             .subwin(3, win.get_max_x(), win.get_max_y() - 3, 0)
@@ -59,7 +59,7 @@ impl<'a> UIInputScreen<'a> {
         input_win.refresh();
         Self {
             screen: UIScreen {
-                title: "Input",
+                title: String::from("Input"),
                 window: Rc::new(RefCell::new(input_win)),
                 border_color_pair: None,
             },
@@ -109,14 +109,14 @@ impl<'a> UIInputScreen<'a> {
         // }
     }
 }
-pub struct GameWindow<'a> {
+pub struct GameWindow {
     screen: Window,
     max_x: i32,
     max_y: i32,
-    player_1_screen: UIScreen<'a>,
-    player_2_screen: UIScreen<'a>,
-    text_screen: UIScreen<'a>,
-    input_screen: UIInputScreen<'a>,
+    player_1_screen: UIScreen,
+    player_2_screen: UIScreen,
+    text_screen: UIScreen,
+    input_screen: UIInputScreen,
     input_buffer: String,
 }
 
@@ -125,7 +125,7 @@ pub enum InputResult {
     NoneResult,
 }
 
-impl<'a> GameWindow<'a> {
+impl<'a> GameWindow {
     pub fn new() -> Self {
         let tmp_win = initscr();
         noecho();
@@ -150,17 +150,17 @@ impl<'a> GameWindow<'a> {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         let player_1_screen = UIScreen {
-            title: "Player 1",
+            title: String::from("Player 1"),
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         let player_2_screen = UIScreen {
-            title: "Player 2",
+            title: String::from("Player 2"),
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         let text_screen = UIScreen {
-            title: "Log",
+            title: String::from("Log"),
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
@@ -200,17 +200,17 @@ impl<'a> GameWindow<'a> {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         self.player_1_screen = UIScreen {
-            title: "Player 1",
+            title: String::from("Player 1"),
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         self.player_2_screen = UIScreen {
-            title: "Player 2",
+            title: String::from("Player 2"),
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         self.text_screen = UIScreen {
-            title: "Log",
+            title: String::from("Log"),
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
@@ -243,7 +243,7 @@ impl<'a> GameWindow<'a> {
     }
 }
 
-impl Drop for GameWindow<'_> {
+impl Drop for GameWindow {
     fn drop(&mut self) {
         endwin();
     }
