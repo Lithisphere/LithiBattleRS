@@ -52,7 +52,7 @@ fn main() {
         match inp_result {
             Ok(len) => {}
             Err(e) => {
-                println!("Invalid input.");
+                println!("Invalid input");
                 continue;
             }
         }
