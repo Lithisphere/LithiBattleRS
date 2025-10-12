@@ -59,7 +59,7 @@ impl UIInputScreen {
         input_win.refresh();
         Self {
             screen: UIScreen {
-                title: String::from("Input"),
+                title: "Input".to_string(),
                 window: Rc::new(RefCell::new(input_win)),
                 border_color_pair: None,
             },
@@ -150,17 +150,17 @@ impl<'a> GameWindow {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         let player_1_screen = UIScreen {
-            title: String::from("Player 1"),
+            title: "Player 1".to_string(),
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         let player_2_screen = UIScreen {
-            title: String::from("Player 2"),
+            title: "Player 2".to_string(),
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         let text_screen = UIScreen {
-            title: String::from("Log"),
+            title: "Log".to_string(),
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
@@ -200,17 +200,17 @@ impl<'a> GameWindow {
         let text_win = tmp_win.subwin(middle_height, max_x, top_height, 0).unwrap();
 
         self.player_1_screen = UIScreen {
-            title: String::from("Player 1"),
+            title: "Player 1".to_string(),
             window: Rc::new(RefCell::new(player_1_window)),
             border_color_pair: None,
         };
         self.player_2_screen = UIScreen {
-            title: String::from("Player 2"),
+            title: "Player 2".to_string(),
             window: Rc::new(RefCell::new(player_2_window)),
             border_color_pair: None,
         };
         self.text_screen = UIScreen {
-            title: String::from("Log"),
+            title: "Log".to_string(),
             window: Rc::new(RefCell::new(text_win)),
             border_color_pair: None,
         };
