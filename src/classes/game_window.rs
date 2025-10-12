@@ -230,6 +230,11 @@ impl<'a> GameWindow {
                 self.input_buffer = String::new();
                 res
             }
+            Some(Input::KeyBackspace) => {
+                self.input_buffer = self.input_buffer[0..self.input_buffer.len() - 2].to_string();
+                self.draw();
+                InputResult::NoneResult
+            }
             Some(Input::Character(e)) => {
                 self.input_buffer += &e.to_string();
                 InputResult::NoneResult
