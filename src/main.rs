@@ -1,13 +1,13 @@
 mod character;
 mod classes;
-use std::alloc::GlobalAlloc;
+use classes::game_window::{GameWindow, InputResult};
 use std::io::Write;
 use std::{io, rc::Rc};
 
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 
 use character::character_baud::CharacterBaud;
-use classes::damage::{Damage, DamageType, Damageable};
+use classes::damage::Damageable;
 
 use crate::classes::damage::DamageResult;
 use crate::classes::{
@@ -20,6 +20,14 @@ fn main() {
     duab.borrow_mut().set_name("Duab");
     let players: Vec<Rc<RefCell<dyn Attacker>>> = vec![baud, duab];
 
+    let mut win = GameWindow::new();
+    win.draw();
+    loop {
+        match win.getch() {
+            InputResult::StringResult(s) => {}
+            InputResult::NoneResult => {}
+        }
+    }
     // let dmg = Damage {
     //     amount: 80,
     //     damage_type: DamageType::Bullet,
